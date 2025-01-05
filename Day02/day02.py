@@ -1,3 +1,18 @@
+import argparse
+import logging
+
+parser = argparse.ArgumentParser()
+parser.add_argument(
+    "-d",
+    "--debug",
+    action='store_true',
+    help="Set loglevel to debug",
+)
+
+args = parser.parse_args()
+if(args.debug):
+    logging.basicConfig(format='%(message)s', level=logging.DEBUG)
+
 def getTestInput():
     return [
         "7 6 4 2 1",
@@ -17,38 +32,38 @@ def getInput():
 
 def solution_part1(input) -> int:
     save_reports = len(input)
-    print("inital no of save reports: ", save_reports)
+    logging.debug("inital no of save reports: %s", save_reports)
     for report in input:
         nums = [int(x) for x in report.split(" ")]
-        print("nums", nums)
+        logging.debug("nums: %s", nums)
         diffs = [a - b for a, b in zip(nums[:-1], nums[1:])]
-        print("diffs", diffs)
+        logging.debug("diffs: %s", diffs)
 
         zeros = diffs.count(0)
         if zeros > 0:
-            print("zeros", zeros)
+            logging.debug("zeros: %s", zeros)
             save_reports -= 1
-            print("---")
+            logging.debug("---")
             continue
 
         too_steep = any(abs(d) > 3 for d in diffs)
         if too_steep:
-            print("too steep")
+            logging.debug("too steep")
             save_reports -= 1
-            print("---")
+            logging.debug("---")
             continue
 
         ascending = all(a < b and b - a <= 3 for a, b in zip(nums[:-1], nums[1:]))
-        print("ascending", ascending)
+        logging.debug("ascending: %s", ascending)
         descending = all(a > b and abs(a - b) <= 3 for a, b in zip(nums[:-1], nums[1:]))
-        print("descending", descending)
+        logging.debug("descending: %s", descending)
 
         if not ascending and not descending:
-            print("no strikt inclination")
+            logging.debug("no strikt inclination")
             save_reports -= 1
-            print("---")
+            logging.debug("---")
             continue
-        print("---")
+        logging.debug("---")
 
     return save_reports
 
@@ -70,7 +85,7 @@ def check_single_array(nums):
     i = 0
     error_count = 0
     ascending = True
-    for a, b in zip(nums[nums:-1], nums[1:]):
+    for a, b in zip(nums[:-1], nums[1:]):
         if error_count > 1:
             break
         if a == b:
